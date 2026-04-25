@@ -1,0 +1,690 @@
+{
+  "metadata": {
+    "generatedAt": "2026-04-25T20:00:00+08:00",
+    "datasetVersion": "demo-core-v2",
+    "notes": [
+      "Synthetic Malaysian wallet-risk demo data only.",
+      "UI-first seeded mode with a repository boundary."
+    ]
+  },
+  "queueBanner": {
+    "clusterId": "ATO-APR-25-2000",
+    "title": "ATO precursor cluster 4.2x above same-hour baseline",
+    "numerator": 21,
+    "denominator": 5,
+    "multiplier": 4.2,
+    "windowMinutes": 30,
+    "segmentLabel": "MY logins -> transfer-enabled wallets",
+    "signals": [
+      "18 new-device logins",
+      "9 PIN resets",
+      "6 high-value transfer attempts"
+    ],
+    "summary": "Routing signal only. Final action still depends on evidence and policy."
+  },
+  "queueMetrics": {
+    "openCases": 21,
+    "autoActionReady": 6,
+    "pendingUser": 4,
+    "preventedTransfers": 3
+  },
+  "cases": [
+    {
+      "caseId": "CASE-ATO-001",
+      "scenarioType": "ACCOUNT_TAKEOVER",
+      "status": "PENDING_USER",
+      "resolutionState": "PENDING_USER",
+      "maskedUserLabel": "A*** H****",
+      "maskedPhone": "+60 ***-*** 2189",
+      "segmentLabel": "Transfer-enabled wallet",
+      "walletLabel": "Wallet MY-4432",
+      "regionLabel": "Kuala Lumpur",
+      "currentControlState": "FREEZE_APPLIED",
+      "score": 92,
+      "riskLevel": "CRITICAL",
+      "reasonChips": ["New device", "PIN reset", "Beneficiary added", "Critical IP", "8.7x transfer ratio"],
+      "scoreComponents": [
+        {
+          "code": "NEW_DEVICE_24H",
+          "label": "New device within 24h",
+          "points": 20,
+          "evidenceIds": [
+            "EV-101"
+          ]
+        },
+        {
+          "code": "PIN_RESET_24H",
+          "label": "PIN reset within 24h",
+          "points": 15,
+          "evidenceIds": [
+            "EV-102"
+          ]
+        },
+        {
+          "code": "AMOUNT_RATIO_HIGH",
+          "label": "Transfer amount 8.7x baseline",
+          "points": 18,
+          "evidenceIds": [
+            "EV-104"
+          ]
+        },
+        {
+          "code": "LINKED_PRIOR_CASE",
+          "label": "Linked device in prior reviewed case",
+          "points": 15,
+          "evidenceIds": [
+            "EV-105"
+          ]
+        }
+      ],
+      "facts": [
+        "Device age is 2 hours.",
+        "PIN reset completed 6 minutes before transfer attempt.",
+        "Transfer was blocked before completion."
+      ],
+      "aiInferences": [
+        "The sequence matches a high-confidence account takeover pattern."
+      ],
+      "missingData": [
+        "No successful customer contact confirmation yet."
+      ],
+      "accountChanges": ["PIN reset at 02:01", "Beneficiary addition at 02:04"],
+      "deviceChanges": ["First-seen Android device", "Location drift overnight"],
+      "networkObservations": [
+        {
+          "observationId": "NET-101",
+          "ipAddress": "203.153.31.44",
+          "label": "Hosting-provider exit node",
+          "geoLabel": "Kuala Lumpur, MY",
+          "asnLabel": "AS45899 Digital Core Network",
+          "reputation": "CRITICAL",
+          "disposition": "BLOCKED",
+          "firstSeenAt": "2026-04-25T01:57:00+08:00",
+          "lastSeenAt": "2026-04-25T02:07:00+08:00",
+          "linkedCaseIds": ["CASE-ATO-001", "CASE-UTX-204"],
+          "note": "Seen across two seeded fraud paths inside the same 10-minute window."
+        },
+        {
+          "observationId": "NET-102",
+          "ipAddress": "175.140.84.19",
+          "label": "Residential IP with sudden ASN drift",
+          "geoLabel": "Selangor, MY",
+          "asnLabel": "AS4788 Telekom Malaysia",
+          "reputation": "HIGH",
+          "disposition": "WATCH",
+          "firstSeenAt": "2026-04-24T23:48:00+08:00",
+          "lastSeenAt": "2026-04-25T02:01:00+08:00",
+          "linkedCaseIds": ["CASE-ATO-001"],
+          "note": "New session moved from normal home broadband to a known hosting route."
+        }
+      ],
+      "linkedEntities": [
+        {
+          "entityId": "DEV-772",
+          "entityType": "DEVICE",
+          "label": "Android 15 / DEV-772",
+          "relationship": "Shared fingerprint with prior reviewed case",
+          "riskNote": "Seen in one resolved unauthorized-transaction investigation"
+        },
+        {
+          "entityId": "BEN-101",
+          "entityType": "BENEFICIARY",
+          "label": "New payee J** L***",
+          "relationship": "Beneficiary added 18 min before transfer",
+          "riskNote": "Payee added in same session as device change"
+        },
+        {
+          "entityId": "ACC-221",
+          "entityType": "ACCOUNT",
+          "label": "Destination account / ACC-221",
+          "relationship": "Receiving account flagged in prior cluster",
+          "riskNote": "Appeared in CLUSTER-2025-09 mule investigation"
+        }
+      ],
+      "suspiciousActions": [
+        {
+          "actionId": "SA-1",
+          "label": "Transfer attempt",
+          "amountLabel": "MYR 8,500",
+          "succeeded": false,
+          "note": "Blocked by the action ladder"
+        }
+      ],
+      "timeline": [
+        {
+          "eventId": "TL-101",
+          "occurredAt": "01:58",
+          "type": "LOGIN",
+          "label": "Login from new device",
+          "details": "Android device first seen in wallet history",
+          "succeeded": true
+        },
+        {
+          "eventId": "TL-102",
+          "occurredAt": "02:01",
+          "type": "PIN_RESET",
+          "label": "PIN reset completed",
+          "details": "Reset from same session",
+          "succeeded": true
+        },
+        {
+          "eventId": "TL-103",
+          "occurredAt": "02:06",
+          "type": "TRANSFER_ATTEMPT",
+          "label": "High-value transfer attempted",
+          "details": "Amount exceeds 30-day average by 8.7x",
+          "succeeded": false
+        },
+        {
+          "eventId": "TL-104",
+          "occurredAt": "02:07",
+          "type": "CONTROL_APPLY",
+          "label": "Freeze action applied",
+          "details": "Automatic severe-control path",
+          "succeeded": true
+        }
+      ],
+      "evidenceItems": [
+        { "evidenceId": "EV-101", "kind": "FACT", "title": "New device within 24h", "summary": "Device DEV-772 first seen 2 hours ago.", "source": "behavior_events", "observedAt": "2026-04-25T01:58:00+08:00", "policyIds": ["POL-ATO-03"] },
+        { "evidenceId": "EV-102", "kind": "FACT", "title": "PIN reset before transfer", "summary": "PIN reset occurred 5 minutes before transfer attempt.", "source": "account_changes", "observedAt": "2026-04-25T02:01:00+08:00", "policyIds": ["POL-ATO-03"] },
+        { "evidenceId": "EV-104", "kind": "FACT", "title": "Transfer amount exceeds baseline", "summary": "Attempted transfer is 8.7x the 30-day average.", "source": "transactions", "observedAt": "2026-04-25T02:06:00+08:00", "policyIds": ["POL-OPS-04"] },
+        { "evidenceId": "EV-106", "kind": "FACT", "title": "Critical IP overlap", "summary": "The session IP overlaps with another seeded fraud case and is already blocked in network controls.", "source": "network_graph", "observedAt": "2026-04-25T02:06:30+08:00", "policyIds": ["POL-ATO-03", "POL-OPS-04"] },
+        { "evidenceId": "EV-105", "kind": "INFERENCE", "title": "ATO sequence is highly coherent", "summary": "Signals appear in the classic takeover order: login, change, move money.", "source": "ai_explanation", "observedAt": "2026-04-25T02:08:00+08:00", "confidence": 0.84, "policyIds": ["POL-ATO-03"] }
+      ],
+      "policyHits": [
+        {
+          "policyId": "POL-ATO-03",
+          "title": "ATO severe action policy",
+          "explanation": "Freeze is allowed when new device, account reset, and money-movement risk occur in the same session.",
+          "actionAllowList": [
+            "STEP_UP_VERIFICATION",
+            "FREEZE_ACCOUNT",
+            "ESCALATE"
+          ]
+        },
+        {
+          "policyId": "POL-OPS-04",
+          "title": "Prevent outbound loss",
+          "explanation": "Interrupt movement before completion when transfer risk is high and customer verification is missing.",
+          "actionAllowList": [
+            "REVIEW",
+            "FREEZE_ACCOUNT",
+            "ESCALATE"
+          ]
+        }
+      ],
+      "recommendation": {
+        "recommendationId": "REC-001",
+        "action": "FREEZE_ACCOUNT",
+        "confidence": 0.84,
+        "rationale": "Freeze now, send re-verification, and keep human override visible until identity proof arrives.",
+        "evidenceIds": ["EV-101", "EV-102", "EV-104", "EV-106", "EV-105"],
+        "policyIds": ["POL-ATO-03", "POL-OPS-04"],
+        "humanOverrideOptions": ["STEP_UP_VERIFICATION", "ESCALATE", "ALLOW"]
+      },
+      "prompt": {
+        "promptId": "PR-001",
+        "state": "SIMULATED",
+        "channel": "WHATSAPP",
+        "templateName": "ato_reverify_required_v1",
+        "messagePreview": "Please go to Touch 'n Go to complete relogin / MFA / face recognition. Reply /tng-login once done.",
+        "messageSid": "SIM-MSG-001",
+        "sentAt": "2026-04-25T02:08:00+08:00",
+        "deliveredAt": "2026-04-25T02:08:21+08:00"
+      },
+      "auditEvents": [
+        { "eventId": "AE-001", "actorType": "SYSTEM", "actorName": "ScoreEngine", "eventType": "SCORE_COMPUTED", "summary": "Deterministic score computed at 92.", "createdAt": "2026-04-25T02:06:30+08:00" },
+        { "eventId": "AE-002", "actorType": "SYSTEM", "actorName": "ActionOrchestrator", "eventType": "ACTION_APPLIED", "summary": "Freeze applied automatically on high-confidence path.", "createdAt": "2026-04-25T02:07:11+08:00" },
+        { "eventId": "AE-003", "actorType": "SYSTEM", "actorName": "PromptService", "eventType": "PROMPT_SENT", "summary": "WhatsApp re-verification prompt simulated in seeded demo mode.", "createdAt": "2026-04-25T02:08:21+08:00" }
+      ],
+      "exportNote": "## CASE-ATO-001\n\n### Status\n- Action applied: Freeze account\n- Resolution state: Pending user\n- Control state: FREEZE_APPLIED\n\n### Why\n- Device age is 2 hours.\n- PIN reset completed 6 minutes before transfer attempt.\n- IP 203.153.31.44 is blocked with critical reputation.\n\n### Follow-up\n- Wait for `/tng-login` or escalate manually."
+    },
+    {
+      "caseId": "CASE-ATO-008",
+      "scenarioType": "ACCOUNT_TAKEOVER",
+      "status": "ACTION_APPLIED",
+      "resolutionState": "PENDING_USER",
+      "maskedUserLabel": "N*** R****",
+      "maskedPhone": "+60 ***-*** 9340",
+      "segmentLabel": "Dormant wallet",
+      "walletLabel": "Wallet MY-2191",
+      "regionLabel": "Penang",
+      "currentControlState": "STEP_UP_REQUIRED",
+      "score": 79,
+      "riskLevel": "HIGH",
+      "reasonChips": ["Dormant login", "New payee", "Failed step-up", "Watchlisted IP"],
+      "scoreComponents": [
+        { "code": "DORMANT_REACTIVATION", "label": "Dormant wallet reactivated", "points": 18, "evidenceIds": ["EV-201"] },
+        { "code": "FAILED_STEP_UP", "label": "Prior step-up failed", "points": 16, "evidenceIds": ["EV-202"] },
+        { "code": "NEW_PAYEE", "label": "New payee within 24h", "points": 12, "evidenceIds": ["EV-203"] }
+      ],
+      "facts": ["Wallet inactive for 63 days.", "Step-up challenge failed twice."],
+      "aiInferences": ["Behavior is suspicious but not yet severe enough for auto-freeze."],
+      "missingData": ["Customer has not completed re-login yet."],
+      "accountChanges": ["New payee added at 15:22"],
+      "deviceChanges": ["Login from new iPhone device"],
+      "networkObservations": [
+        {
+          "observationId": "NET-201",
+          "ipAddress": "45.126.112.7",
+          "label": "Commercial VPN egress",
+          "geoLabel": "Penang, MY",
+          "asnLabel": "AS138997 EdgeNet Transit",
+          "reputation": "HIGH",
+          "disposition": "WATCH",
+          "firstSeenAt": "2026-04-25T15:18:00+08:00",
+          "lastSeenAt": "2026-04-25T15:24:00+08:00",
+          "linkedCaseIds": ["CASE-ATO-008"],
+          "note": "First-seen wallet reactivation came through a VPN path not present in prior good logins."
+        },
+        {
+          "observationId": "NET-202",
+          "ipAddress": "118.101.92.15",
+          "label": "Known-good historical broadband",
+          "geoLabel": "Penang, MY",
+          "asnLabel": "AS4788 Telekom Malaysia",
+          "reputation": "LOW",
+          "disposition": "ALLOWLISTED",
+          "firstSeenAt": "2026-03-01T09:10:00+08:00",
+          "lastSeenAt": "2026-03-14T20:41:00+08:00",
+          "linkedCaseIds": ["CASE-ATO-008"],
+          "note": "Customer's last good session used this home broadband IP, not the current VPN route."
+        }
+      ],
+      "linkedEntities": [],
+      "suspiciousActions": [
+        {
+          "actionId": "SA-2",
+          "label": "Top-up attempt",
+          "amountLabel": "MYR 1,900",
+          "succeeded": false,
+          "note": "Held pending verification"
+        }
+      ],
+      "timeline": [
+        {
+          "eventId": "TL-201",
+          "occurredAt": "15:18",
+          "type": "LOGIN",
+          "label": "Dormant wallet reactivated",
+          "details": "First login in 63 days",
+          "succeeded": true
+        },
+        {
+          "eventId": "TL-202",
+          "occurredAt": "15:22",
+          "type": "PAYEE_ADD",
+          "label": "New payee added",
+          "details": "Same session as reactivation",
+          "succeeded": true
+        },
+        {
+          "eventId": "TL-203",
+          "occurredAt": "15:24",
+          "type": "STEP_UP",
+          "label": "Step-up required",
+          "details": "Challenge failed twice",
+          "succeeded": false
+        }
+      ],
+      "evidenceItems": [
+        { "evidenceId": "EV-201", "kind": "FACT", "title": "Dormant wallet reactivated", "summary": "No user activity for 63 days before this login.", "source": "wallet_activity", "observedAt": "2026-04-25T15:18:00+08:00", "policyIds": ["POL-ATO-02"] },
+        { "evidenceId": "EV-202", "kind": "FACT", "title": "Step-up challenge failed", "summary": "Two consecutive re-login challenges failed.", "source": "auth_events", "observedAt": "2026-04-25T15:24:00+08:00", "policyIds": ["POL-ATO-02"] },
+        { "evidenceId": "EV-203", "kind": "FACT", "title": "New payee added", "summary": "New payee created before attempted top-up.", "source": "beneficiary_events", "observedAt": "2026-04-25T15:22:00+08:00", "policyIds": ["POL-OPS-02"] },
+        { "evidenceId": "EV-204", "kind": "FACT", "title": "VPN-backed login path", "summary": "The reactivated session came from a VPN egress path rather than the user's known-good broadband IP.", "source": "network_graph", "observedAt": "2026-04-25T15:19:00+08:00", "policyIds": ["POL-ATO-02"] }
+      ],
+      "policyHits": [
+        {
+          "policyId": "POL-ATO-02",
+          "title": "ATO step-up policy",
+          "explanation": "Require re-verification before money movement when signals are high but not yet severe.",
+          "actionAllowList": [
+            "REVIEW",
+            "STEP_UP_VERIFICATION",
+            "ESCALATE"
+          ]
+        }
+      ],
+      "recommendation": {
+        "recommendationId": "REC-008",
+        "action": "STEP_UP_VERIFICATION",
+        "confidence": 0.67,
+        "rationale": "Hold the wallet at step-up rather than freeze. Keep the human override visible.",
+        "evidenceIds": ["EV-201", "EV-202", "EV-203", "EV-204"],
+        "policyIds": ["POL-ATO-02"],
+        "humanOverrideOptions": ["FREEZE_ACCOUNT", "REVIEW", "ALLOW"]
+      },
+      "prompt": {
+        "promptId": "PR-008",
+        "state": "SIMULATED",
+        "channel": "WHATSAPP",
+        "templateName": "ato_reverify_required_v1",
+        "messagePreview": "We noticed unusual account activity. Please complete relogin in Touch 'n Go.",
+        "messageSid": "SIM-MSG-008",
+        "sentAt": "2026-04-25T15:25:00+08:00"
+      },
+      "auditEvents": [
+        { "eventId": "AE-201", "actorType": "SYSTEM", "actorName": "PolicyEngine", "eventType": "ACTION_RECOMMENDED", "summary": "Step-up verification recommended.", "createdAt": "2026-04-25T15:24:30+08:00" },
+        { "eventId": "AE-202", "actorType": "SYSTEM", "actorName": "PromptService", "eventType": "PROMPT_SENT", "summary": "WhatsApp re-verification prompt simulated in seeded demo mode.", "createdAt": "2026-04-25T15:25:00+08:00" }
+      ],
+      "exportNote": "## CASE-ATO-008\n\n### Status\n- Action applied: Step-up verification\n- Resolution state: Pending user\n- Control state: STEP_UP_REQUIRED\n\n### Why\n- Wallet inactive for 63 days.\n- Step-up challenge failed twice.\n- IP 45.126.112.7 is on watch with high reputation risk.\n\n### Follow-up\n- Wait for `/tng-login` or escalate if the prompt expires."
+    },
+    {
+      "caseId": "CASE-UTX-204",
+      "scenarioType": "UNAUTHORIZED_TRANSACTION",
+      "status": "INVESTIGATING",
+      "resolutionState": "ESCALATED",
+      "maskedUserLabel": "S*** A****",
+      "maskedPhone": "+60 ***-*** 4455",
+      "segmentLabel": "High-volume wallet",
+      "walletLabel": "Wallet MY-8890",
+      "regionLabel": "Johor Bahru",
+      "currentControlState": "REVIEW_PENDING",
+      "score": 71,
+      "riskLevel": "HIGH",
+      "reasonChips": ["New device", "Linked prior case", "Beneficiary change", "Proxy IP"],
+      "scoreComponents": [
+        { "code": "NEW_DEVICE_24H", "label": "New device within 24h", "points": 20, "evidenceIds": ["EV-301"] },
+        { "code": "LINKED_PRIOR_CASE", "label": "Linked device in prior case", "points": 15, "evidenceIds": ["EV-302"] },
+        { "code": "BENEFICIARY_ADDED_24H", "label": "Beneficiary added within 24h", "points": 10, "evidenceIds": ["EV-303"] }
+      ],
+      "facts": ["Beneficiary changed before payment.", "Customer report is still pending callback."],
+      "aiInferences": ["Potential follow-on loss after takeover. Analyst review still needed."],
+      "missingData": ["No confirmed customer statement yet."],
+      "accountChanges": ["Beneficiary change at 11:11"],
+      "deviceChanges": ["New Samsung device at 10:58"],
+      "networkObservations": [
+        {
+          "observationId": "NET-301",
+          "ipAddress": "103.21.244.88",
+          "label": "Anonymous proxy route",
+          "geoLabel": "Johor Bahru, MY",
+          "asnLabel": "AS135391 Secure Transit Cloud",
+          "reputation": "CRITICAL",
+          "disposition": "BLOCKED",
+          "firstSeenAt": "2026-04-25T10:57:00+08:00",
+          "lastSeenAt": "2026-04-25T11:14:00+08:00",
+          "linkedCaseIds": ["CASE-UTX-204", "CASE-ATO-001"],
+          "note": "Same network cluster also appears in the severe ATO seed, suggesting shared infrastructure."
+        },
+        {
+          "observationId": "NET-302",
+          "ipAddress": "219.95.44.201",
+          "label": "Prior normal broadband",
+          "geoLabel": "Johor Bahru, MY",
+          "asnLabel": "AS9534 Maxis Broadband",
+          "reputation": "LOW",
+          "disposition": "ALLOWLISTED",
+          "firstSeenAt": "2026-04-11T21:14:00+08:00",
+          "lastSeenAt": "2026-04-18T08:02:00+08:00",
+          "linkedCaseIds": ["CASE-UTX-204"],
+          "note": "The customer's recent good sessions used this IP family, not the current proxy route."
+        }
+      ],
+      "linkedEntities": [],
+      "suspiciousActions": [
+        {
+          "actionId": "SA-3",
+          "label": "Payment succeeded",
+          "amountLabel": "MYR 1,240",
+          "succeeded": true,
+          "note": "Requires escalation and case note handoff"
+        }
+      ],
+      "timeline": [
+        {
+          "eventId": "TL-301",
+          "occurredAt": "10:58",
+          "type": "LOGIN",
+          "label": "Login from new device",
+          "details": "New Samsung device first seen",
+          "succeeded": true
+        },
+        {
+          "eventId": "TL-302",
+          "occurredAt": "11:11",
+          "type": "BENEFICIARY_ADD",
+          "label": "Beneficiary edited",
+          "details": "Payout details changed before payment",
+          "succeeded": true
+        },
+        {
+          "eventId": "TL-303",
+          "occurredAt": "11:14",
+          "type": "PAYMENT",
+          "label": "Payment succeeded",
+          "details": "Unauthorized transaction suspected",
+          "succeeded": true
+        }
+      ],
+      "evidenceItems": [
+        { "evidenceId": "EV-301", "kind": "FACT", "title": "New Samsung device", "summary": "Device first seen today.", "source": "behavior_events", "observedAt": "2026-04-25T10:58:00+08:00", "policyIds": ["POL-OPS-05"] },
+        { "evidenceId": "EV-302", "kind": "FACT", "title": "Linked prior case", "summary": "Device fingerprint overlaps with prior case history.", "source": "entity_edges", "observedAt": "2026-04-25T11:00:00+08:00", "policyIds": ["POL-OPS-05"] },
+        { "evidenceId": "EV-303", "kind": "POLICY", "title": "Follow-on unauthorized transaction policy", "summary": "Escalate when funds may already have left and customer contact is incomplete.", "source": "policy_engine", "observedAt": "2026-04-25T11:15:00+08:00", "policyIds": ["POL-OPS-05"] },
+        { "evidenceId": "EV-304", "kind": "FACT", "title": "Proxy-backed payment path", "summary": "The payment came from a blocked proxy route instead of the customer's known-good IP family.", "source": "network_graph", "observedAt": "2026-04-25T11:12:00+08:00", "policyIds": ["POL-OPS-05"] }
+      ],
+      "policyHits": [
+        {
+          "policyId": "POL-OPS-05",
+          "title": "Post-loss escalation policy",
+          "explanation": "Escalate suspected unauthorized transactions with incomplete customer confirmation.",
+          "actionAllowList": [
+            "REVIEW",
+            "ESCALATE"
+          ]
+        }
+      ],
+      "recommendation": {
+        "recommendationId": "REC-204",
+        "action": "ESCALATE",
+        "confidence": 0.61,
+        "rationale": "Possible loss already occurred. Escalate with a complete evidence pack and keep override visible.",
+        "evidenceIds": ["EV-301", "EV-302", "EV-303", "EV-304"],
+        "policyIds": ["POL-OPS-05"],
+        "humanOverrideOptions": ["REVIEW", "ALLOW"]
+      },
+      "prompt": {
+        "promptId": "PR-204",
+        "state": "FAILED",
+        "channel": "WHATSAPP",
+        "templateName": "ato_reverify_required_v1",
+        "messagePreview": "We are reviewing unusual activity. Please contact support.",
+        "sentAt": "2026-04-25T11:18:00+08:00"
+      },
+      "auditEvents": [
+        {
+          "eventId": "AE-301",
+          "actorType": "ANALYST",
+          "actorName": "Nora Lee",
+          "eventType": "CASE_OPENED",
+          "summary": "Analyst opened case for manual investigation.",
+          "createdAt": "2026-04-25T11:16:00+08:00"
+        }
+      ],
+      "exportNote": "## CASE-UTX-204\n\n### Status\n- Recommended action: Escalate\n- Resolution state: Escalated\n- Control state: REVIEW_PENDING\n\n### Why\n- Beneficiary changed before payment.\n- Customer report is still pending callback.\n- IP 103.21.244.88 is blocked with critical reputation.\n\n### Follow-up\n- Complete the evidence pack and hand off for manual review."
+    }
+  ],
+  "controls": {
+    "actionBands": [
+      {
+        "minScore": 0,
+        "maxScore": 69,
+        "action": "ALLOW"
+      },
+      {
+        "minScore": 70,
+        "maxScore": 84,
+        "action": "STEP_UP_VERIFICATION"
+      },
+      {
+        "minScore": 85,
+        "maxScore": 100,
+        "action": "FREEZE_ACCOUNT"
+      }
+    ],
+    "variableDefinitions": [
+      {
+        "name": "is_new_device",
+        "type": "BOOLEAN",
+        "sourceFields": [
+          "behavior_events.device_first_seen_at"
+        ],
+        "lookbackWindow": "24h",
+        "transform": "device_age_hours <= 24",
+        "description": "True when the current device is first seen within the last 24 hours."
+      },
+      {
+        "name": "pin_reset_24h",
+        "type": "BOOLEAN",
+        "sourceFields": [
+          "account_changes.pin_reset_at"
+        ],
+        "lookbackWindow": "24h",
+        "transform": "pin_reset_at >= now - 24h",
+        "description": "True when the user reset PIN within the last 24 hours."
+      },
+      {
+        "name": "amount_ratio_30d",
+        "type": "RATIO",
+        "sourceFields": [
+          "transactions.amount",
+          "transactions.avg_30d"
+        ],
+        "lookbackWindow": "30d",
+        "transform": "amount / avg_30d",
+        "description": "Current transfer amount divided by the user's 30-day average."
+      }
+    ],
+    "promptTemplate": "Please go to Touch 'n Go to complete relogin / MFA / face recognition. Reply /tng-login once done.",
+    "draftRule": "FREEZE_ACCOUNT if :is_new_device = true and :pin_reset_24h = true and :amount_ratio_30d >= 5",
+    "replaySummary": {
+      "evaluatedCases": 10,
+      "before": {
+        "badCasesCaught": 5,
+        "goodUsersDelayed": 1,
+        "analystReviews": 7
+      },
+      "after": {
+        "badCasesCaught": 6,
+        "goodUsersDelayed": 2,
+        "analystReviews": 9
+      }
+    },
+    "replayScenarios": [
+      {
+        "scenarioId": "RS-1",
+        "label": "Primary ATO case",
+        "beforeAction": "STEP_UP_VERIFICATION",
+        "afterAction": "FREEZE_ACCOUNT",
+        "impact": "One extra bad case stopped before transfer completion."
+      },
+      {
+        "scenarioId": "RS-2",
+        "label": "Dormant wallet recovery",
+        "beforeAction": "ALLOW",
+        "afterAction": "STEP_UP_VERIFICATION",
+        "impact": "One extra good user delay introduced."
+      },
+      {
+        "scenarioId": "RS-3",
+        "label": "Unauthorized transaction backup case",
+        "beforeAction": "REVIEW",
+        "afterAction": "ESCALATE",
+        "impact": "Analyst workload rises but evidence pack is more complete."
+      }
+    ],
+    "rules": [
+      {
+        "ruleId": "RULE-ATO-FREEZE-001",
+        "name": "Freeze on severe ATO sequence",
+        "status": "ACTIVE",
+        "appliesTo": "Transfer-enabled wallets",
+        "action": "FREEZE_ACCOUNT",
+        "version": "v12",
+        "owner": "Risk controls",
+        "lastEditedAt": "2026-04-25T20:05:00+08:00",
+        "freezeThreshold": 85,
+        "rationale": "Use severe action only when device, credential reset, and movement risk appear in the same session.",
+        "conditions": [
+          {
+            "clauseId": "C-1",
+            "variableName": "is_new_device",
+            "operator": "=",
+            "value": "true",
+            "hint": "First-seen device within the last 24 hours."
+          },
+          {
+            "clauseId": "C-2",
+            "variableName": "pin_reset_24h",
+            "operator": "=",
+            "value": "true",
+            "hint": "Credential reset happened in the active risk window."
+          },
+          {
+            "clauseId": "C-3",
+            "variableName": "amount_ratio_30d",
+            "operator": ">=",
+            "value": "5",
+            "hint": "Current transfer is at least 5x the 30-day average."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-ATO-STEPUP-009",
+        "name": "Step up dormant wallet recovery",
+        "status": "ACTIVE",
+        "appliesTo": "Dormant wallets",
+        "action": "STEP_UP_VERIFICATION",
+        "version": "v6",
+        "owner": "Account integrity",
+        "lastEditedAt": "2026-04-24T18:40:00+08:00",
+        "freezeThreshold": 82,
+        "rationale": "Hold the session at re-verification first when the wallet reactivates after dormancy and a new payee appears.",
+        "conditions": [
+          {
+            "clauseId": "C-4",
+            "variableName": "is_new_device",
+            "operator": "=",
+            "value": "true",
+            "hint": "New device is still a strong precursor."
+          },
+          {
+            "clauseId": "C-5",
+            "variableName": "amount_ratio_30d",
+            "operator": ">=",
+            "value": "2",
+            "hint": "Lower bar because dormant-wallet reactivation needs earlier friction."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-UTX-ESCALATE-003",
+        "name": "Escalate likely post-loss case",
+        "status": "SHADOW",
+        "appliesTo": "Unauthorized transaction review",
+        "action": "ESCALATE",
+        "version": "v3",
+        "owner": "Fraud strategy",
+        "lastEditedAt": "2026-04-23T13:12:00+08:00",
+        "freezeThreshold": 78,
+        "rationale": "Keep this rule in shadow until the linked-device evidence pack is consistently complete.",
+        "conditions": [
+          {
+            "clauseId": "C-6",
+            "variableName": "is_new_device",
+            "operator": "=",
+            "value": "true",
+            "hint": "New-device evidence is mandatory in shadow mode."
+          },
+          {
+            "clauseId": "C-7",
+            "variableName": "amount_ratio_30d",
+            "operator": ">=",
+            "value": "1",
+            "hint": "Post-loss escalation tolerates low amounts if loss already happened."
+          }
+        ]
+      }
+    ]
+  }
+}
