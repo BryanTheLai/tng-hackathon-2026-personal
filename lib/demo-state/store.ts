@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 import { z } from "zod";
@@ -11,7 +12,7 @@ import {
 } from "@/lib/domain/schema";
 
 const seedFilePath = path.join(process.cwd(), "seed", "demo-core.json");
-const runtimeFilePath = path.join(process.cwd(), "seed", "runtime-demo-state.json");
+const runtimeFilePath = path.join(resolveRuntimeStateDir(), "runtime-demo-state.json");
 
 const runtimeStateSchema = z.object({
   demoData: demoDataSchema,
@@ -24,6 +25,21 @@ const runtimeStateSchema = z.object({
 });
 
 type RuntimeState = z.infer<typeof runtimeStateSchema>;
+
+function resolveRuntimeStateDir() {
+  const configuredDir = process.env.DEMO_RUNTIME_DIR?.trim();
+
+  if (configuredDir) {
+    return configuredDir;
+  }
+
+  // Mutable demo state must live outside the deployed app bundle.
+  // Serverless hosts and synced folders often treat repo files as immutable.
+  const directoryName =
+    process.env.NODE_ENV === "test" ? "tng-hackathon-2026-personal-test" : "tng-hackathon-2026-personal";
+
+  return path.join(os.tmpdir(), directoryName);
+}
 
 export function getDemoData(): DemoData {
   return structuredClone(readRuntimeState().demoData);
